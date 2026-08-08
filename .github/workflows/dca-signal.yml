@@ -1,0 +1,28 @@
+name: Nasdaq100 DCA Signal
+
+# 定时：每天北京时间 14:45 运行（GitHub Actions 使用 UTC，14:45 北京 = 06:45 UTC）
+# 另支持手动触发：仓库 Actions 页面 -> Run workflow
+on:
+  schedule:
+    - cron: "45 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dca-signal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run DCA signal and push to WeChat
+        env:
+          SENDKEY: ${{ secrets.SENDKEY }}
+        run: python cloud/cloud_dca.py
